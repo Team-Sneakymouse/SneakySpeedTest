@@ -10,45 +10,34 @@
 </head>
 <body>
   <main>
-    <header><a class="brand" href="/" aria-label="SneakySpeedTest home"><span class="brand-icon" aria-hidden="true">s.</span>SneakySpeedTest</a><span class="tag">RESOURCEPACK DIAGNOSTICS</span></header>
-    <section class="intro">
-      <p class="eyebrow"><span class="dot"></span> A little test. A useful clue.</p>
-      <h1>Let's check<br>the download.</h1>
-      <p class="lede">Waiting ages for the resourcepack? Compare two download routes and help us figure out where it slows down.</p>
-    </section>
     <div id="notice" class="notice" role="status" hidden></div>
-    <section class="test-card" aria-labelledby="test-heading">
-      <div class="section-heading"><span class="step">01</span><div><h2 id="test-heading">Check your connection</h2><p>Use your Minecraft computer and usual internet connection.</p></div><span id="test-state" class="state">READY WHEN YOU ARE</span></div>
+    <section class="test-card" aria-label="Download test">
       <div class="test-content">
         <div class="instructions">
-          <p>Keep this tab open and visible. Pause other downloads and streaming for a clearer result.</p>
-          <div class="facts"><div><strong>64 MiB</strong><span>maximum planned download</span></div><div><strong>Up to 2 minutes</strong><span>four samples, one at a time</span></div></div>
-          <p class="fine-print">Nothing is saved to our database until you click Submit. You can stop the test at any time and still send the partial results.</p>
+          <p>Use your Minecraft PC. Keep this tab visible.</p>
+          <p class="fine-print">Up to 64 MiB · 2 minutes · Saved only when you submit</p>
         </div>
-        <div class="test-controls"><button id="start" class="button primary" disabled>Loading test…</button><button id="cancel" class="button secondary" hidden>Stop test</button><p class="fine-print">No login. No files to install.</p></div>
+        <div class="test-controls"><button id="start" class="button primary" disabled>Loading…</button><button id="cancel" class="button secondary" hidden>Stop</button></div>
       </div>
       <div id="progress-area" class="progress-area" hidden><div class="progress-label"><span id="progress-label">Starting…</span><span id="progress-value">0 / 4 samples</span></div><progress id="progress" max="4" value="0"></progress><p id="live-speed" class="fine-print">Connecting…</p></div>
       <div class="route-grid">
-        <article class="route"><div class="route-title"><span class="route-dot production"></span><h3>Production domain</h3><span class="route-kind">CUSTOM URL</span></div><p id="production-host" class="host">resourcepack.rawb.tv</p><div class="speed"><strong id="production-speed">—</strong><span>Mbps</span></div><p id="production-detail" class="fine-print">Waiting for your test</p><div id="production-samples" class="sample-list"></div></article>
-        <article class="route"><div class="route-title"><span class="route-dot comparison"></span><h3>R2 development domain</h3><span class="route-kind">COMPARISON</span></div><p id="comparison-host" class="host">r2.dev</p><div class="speed"><strong id="comparison-speed">—</strong><span>Mbps</span></div><p id="comparison-detail" class="fine-print">Waiting for your test</p><div id="comparison-samples" class="sample-list"></div></article>
+        <article class="route"><p id="production-host" class="host">resourcepack.rawb.tv</p><div class="speed"><strong id="production-speed">—</strong><span>Mbps</span></div><div id="production-samples" class="sample-list"></div></article>
+        <article class="route"><p id="comparison-host" class="host">r2.dev</p><div class="speed"><strong id="comparison-speed">—</strong><span>Mbps</span></div><div id="comparison-samples" class="sample-list"></div></article>
       </div>
-      <div id="outcome" class="outcome" hidden><p id="outcome-text"></p><button id="again" class="text-button">Run again</button><span class="fine-print">Running again replaces this report.</span></div>
+      <div id="outcome" class="outcome" hidden><p id="outcome-text"></p><button id="again" class="text-button" title="Replaces this report">Run again</button></div>
     </section>
-    <section id="submit-section" class="submit-card" aria-labelledby="submit-heading" hidden>
-      <div class="section-heading"><span class="step">02</span><div><h2 id="submit-heading">Send us the useful bits</h2><p>Your measurements can help explain the slow downloads.</p></div></div>
+    <section id="submit-section" class="submit-card" aria-label="Submit report" hidden>
       <div class="submit-content">
-        <label class="username-label" for="username">Minecraft username <span>optional</span><input id="username" maxlength="64" autocomplete="off" placeholder="Leave blank to stay anonymous"></label>
+        <label class="username-label" for="username">Minecraft username <span>optional</span><input id="username" maxlength="64" autocomplete="off"></label>
         <div class="disclosure">
-          <div><h3>What we collect</h3><ul><li>Download speeds, timings, byte counts, test order, and any errors.</li><li>Available Cloudflare edge IDs, cache status, and file response headers.</li><li>Browser information, language, and whether the tab was hidden during the test.</li><li>Your country and network ASN when Cloudflare provides them.</li><li>Your Minecraft username, only if you enter it.</li></ul></div>
-          <div><h3>What we don't store</h3><ul><li>Your raw IP address.</li><li>The downloaded resourcepack contents.</li><li>Cookies, browsing history, or Minecraft account credentials.</li></ul><p class="fine-print">The application uses no analytics or tracking cookies. Cloudflare and the hosting infrastructure process your connection as part of serving the site.</p></div>
+          <p>Submit sends download measurements, timestamps, test order, errors, response headers, browser/language, tab visibility, country/ASN, and optional username.</p>
+          <p>We don't store raw IPs, pack contents, cookies, browsing history, or account credentials. The operator plans to delete results in about two weeks.</p>
         </div>
-        <p class="retention">This is a temporary investigation. The operator plans to remove the deployment and delete its results in about two weeks. There is no automatic expiry.</p>
-        <details><summary>Review your report</summary><p class="fine-print">The server adds its submission timestamp and the country/ASN from your connection when you submit. Unknown values stay empty.</p><pre id="report-preview"></pre></details>
-        <div class="submit-actions"><button id="submit" class="button primary">Submit results</button><button id="download" class="button secondary">Save a local copy</button><span id="submit-status" role="status" aria-live="polite"></span></div>
+        <details><summary>Report</summary><p class="fine-print">The server adds the submission time and country/ASN. Cloudflare and hosting infrastructure process your connection. No analytics or automatic expiry.</p><pre id="report-preview"></pre></details>
+        <div class="submit-actions"><button id="submit" class="button primary">Submit</button><button id="download" class="button secondary">Save JSON</button><span id="submit-status" role="status" aria-live="polite"></span></div>
       </div>
     </section>
-    <footer><p>Browser measurements help us compare routes. They may differ from Minecraft's download speed.</p><a href="https://github.com/Team-Sneakymouse/SneakySpeedTest" target="_blank" rel="noopener noreferrer">View source ↗</a></footer>
-    <noscript><p class="notice">This test needs JavaScript to measure downloads. Enable it and reload this page.</p></noscript>
+    <noscript><p class="notice">Enable JavaScript and reload.</p></noscript>
   </main>
 </body>
 </html>

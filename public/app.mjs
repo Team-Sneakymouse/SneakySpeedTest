@@ -29,16 +29,14 @@ function renderSamples() {
     const samples = report.samples.filter(sample => sample.endpointId === endpoint.id);
     const speed = summarize(report.samples, endpoint.id);
     $(`${endpoint.id}-speed`).textContent = mbps(speed);
-    const good = samples.filter(sample => sample.status === 'succeeded').length;
-    $(`${endpoint.id}-detail`).textContent = speed === null ? (samples.length ? 'No complete samples yet' : 'Waiting for this route')
-      : `${(speed / 8).toFixed(2)} MB/s · ${good} of 2 samples complete`;
     const list = $(`${endpoint.id}-samples`);
     list.replaceChildren();
     for (const sample of samples) {
       const row = document.createElement('div');
       row.className = `sample-row${sample.status === 'succeeded' ? '' : ' error'}`;
       const label = document.createElement('span');
-      label.textContent = `Sample ${sample.round}`;
+      label.textContent = `#${sample.round}`;
+      label.setAttribute('aria-label', `Sample ${sample.round}`);
       const result = document.createElement('span');
       result.textContent = sample.status === 'succeeded' ? `${mbps(sample.mbps)} Mbps · ${(sample.durationMs / 1000).toFixed(2)}s`
         : `${sample.status} · ${mbps(sample.mbps)} Mbps partial · ${mib(sample.bytes)} MiB`;
@@ -54,20 +52,19 @@ async function runTest() {
   controller = new AbortController();
   submitted = false;
   $('start').disabled = true;
-  $('start').textContent = 'Test running…';
+  $('start').textContent = 'Running…';
   $('cancel').hidden = false;
   $('cancel').disabled = false;
-  $('cancel').textContent = 'Stop test';
+  $('cancel').textContent = 'Stop';
   $('progress-area').hidden = false;
   $('progress').value = 0;
   $('progress-value').textContent = '0 / 4 samples';
   $('outcome').hidden = true;
   $('submit-section').hidden = true;
-  $('test-state').textContent = 'TEST IN PROGRESS';
   $('submit').disabled = !config.submissionsAvailable;
-  $('submit').textContent = 'Submit results';
+  $('submit').textContent = 'Submit';
   $('username').disabled = false;
-  $('submit-status').textContent = config.submissionsAvailable ? '' : 'Storage is not configured. You can save a local copy.';
+  $('submit-status').textContent = config.submissionsAvailable ? '' : 'Submission unavailable.';
   report = {
     schemaVersion: config.schemaVersion, configId: config.configId, submissionId: crypto.randomUUID(),
     username: $('username').value.trim(), startedAt: new Date().toISOString(), finishedAt: null,
@@ -85,13 +82,13 @@ async function runTest() {
       if (controller.signal.aborted) break;
       const endpoint = config.endpoints.find(item => item.id === slot.endpointId);
       const completed = report.samples.length;
-      $('progress-label').textContent = `${endpoint.label} · sample ${slot.round} of 2`;
+      $('progress-label').textContent = `${$(slot.endpointId + '-host').textContent} · ${slot.round}/2`;
       $('live-speed').textContent = 'Connecting…';
       const sample = await measureSample(endpoint, slot, config, {
         signal: controller.signal,
         onProgress({ bytes, elapsedMs }) {
           $('progress').value = completed + Math.min(1, bytes / config.sampleBytes);
-          $('live-speed').textContent = `${mib(bytes)} / 16 MiB · ${mbps(bytes * 8 / Math.max(1, elapsedMs) / 1000)} Mbps so far`;
+          $('live-speed').textContent = `${mib(bytes)} / 16 MiB · ${mbps(bytes * 8 / Math.max(1, elapsedMs) / 1000)} Mbps`;
         },
       });
       report.samples.push(sample);
@@ -110,17 +107,14 @@ async function runTest() {
     report.finishedAt = new Date().toISOString();
     controller = null;
     $('cancel').hidden = true;
-    $('start').textContent = 'Test finished';
-    $('test-state').textContent = report.status === 'completed' ? 'TEST COMPLETE' : 'PARTIAL RESULTS';
-    $('progress-label').textContent = report.status === 'completed' ? 'All four samples complete' : 'Test ended. Partial results are useful too.';
-    $('live-speed').textContent = 'Average speeds above use complete samples, including connection time.';
+    $('start').textContent = 'Finished';
+    $('progress-area').hidden = true;
     $('outcome').hidden = false;
     const prod = summarize(report.samples, 'production');
     const comp = summarize(report.samples, 'comparison');
-    $('outcome-text').textContent = report.status !== 'completed' ? 'Some samples did not finish. You can still submit the report, including any errors.'
-      : prod && comp && comp / prod > 1.5 ? `The R2 development route was ${(comp / prod).toFixed(1)}× faster in this test. Send the report so we can compare it with other players.`
-      : prod && comp && prod / comp > 1.5 ? `The production route was ${(prod / comp).toFixed(1)}× faster in this test. Send the report so we can compare it with other players.`
-      : 'The two routes had similar speeds in this test. Your result is still useful.';
+    $('outcome-text').textContent = report.status !== 'completed' ? 'Partial results can be submitted.'
+      : prod && comp && comp / prod > 1.5 ? `R2.dev was ${(comp / prod).toFixed(1)}× faster.`
+      : prod && comp && prod / comp > 1.5 ? `Production was ${(prod / comp).toFixed(1)}× faster.` : 'Similar speeds.';
     $('submit-section').hidden = false;
     updatePreview();
     void refreshContext();
@@ -160,7 +154,7 @@ $('submit').addEventListener('click', async () => {
     if (!response.ok) throw new Error(body.error || 'Submission failed. Please retry.');
     submitted = true;
     $('submit').textContent = 'Submitted';
-    $('submit-status').textContent = 'Saved. Thanks for helping us investigate.';
+    $('submit-status').textContent = 'Saved.';
   } catch (error) {
     $('submit-status').textContent = error.name === 'TimeoutError' ? 'Submission timed out. Retry Submit; it will not create a duplicate.'
       : error instanceof TypeError ? 'Could not reach the server. Your results are still here; retry Submit.' : error.message;
@@ -175,16 +169,20 @@ try {
   config = await response.json();
   const mobile = /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   if (mobile) {
-    notice('Please open this page on the desktop computer you use for Minecraft. Mobile connections would measure a different route.');
+    notice('Open this on your Minecraft PC.');
     $('start').textContent = 'Desktop computer required';
   } else if (!window.isSecureContext || !crypto.randomUUID || !window.ReadableStream) {
     notice('Use a current desktop browser over HTTPS, or localhost for local testing.');
     $('start').textContent = 'Browser update required';
   } else {
     $('start').disabled = false;
-    $('start').textContent = 'Start download test';
+    $('start').textContent = 'Start';
   }
-  for (const endpoint of config.endpoints) $(`${endpoint.id}-host`).textContent = new URL(endpoint.url).hostname;
-  if (!config.submissionsAvailable) notice('Result storage is not configured yet. You can run the test and save a local report.');
+  for (const endpoint of config.endpoints) {
+    const hostname = new URL(endpoint.url).hostname;
+    $(`${endpoint.id}-host`).textContent = hostname.endsWith('.r2.dev') ? 'r2.dev' : hostname;
+    $(`${endpoint.id}-host`).title = hostname;
+  }
+  if (!config.submissionsAvailable) notice('Submission unavailable. Local testing only.');
   void refreshContext();
 } catch (error) { notice(error.message); $('start').textContent = 'Unable to load test'; }

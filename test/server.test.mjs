@@ -72,7 +72,7 @@ test('serves UI/config without secrets and saves only on an explicit valid POST'
   const base = `http://127.0.0.1:${server.address().port}`;
   const page = await fetch(base);
   assert.equal(page.status, 200);
-  assert.ok((await page.text()).includes('Submit results'));
+  assert.ok((await page.text()).includes('id="submit"'));
   const visible = await (await fetch(`${base}/api/config`)).text();
   assert.ok(!visible.includes('do-not-expose'));
   assert.equal((await fetch(`${base}/.env`)).status, 404);
