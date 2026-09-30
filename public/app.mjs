@@ -61,6 +61,7 @@ async function runTest() {
   $('progress-value').textContent = '0 / 4 samples';
   $('outcome').hidden = true;
   $('submit-section').hidden = true;
+  $('background-warning').hidden = true;
   $('submit').disabled = !config.submissionsAvailable;
   $('submit').textContent = 'Submit';
   $('username').disabled = false;
@@ -116,6 +117,7 @@ async function runTest() {
       : prod && comp && comp / prod > 1.5 ? `R2.dev was ${(comp / prod).toFixed(1)}× faster.`
       : prod && comp && prod / comp > 1.5 ? `Production was ${(prod / comp).toFixed(1)}× faster.` : 'Similar speeds.';
     $('submit-section').hidden = false;
+    $('background-warning').hidden = !report.wasBackgrounded;
     updatePreview();
     void refreshContext();
   }
@@ -153,6 +155,7 @@ $('submit').addEventListener('click', async () => {
     const body = await response.json();
     if (!response.ok) throw new Error(body.error || 'Submission failed. Please retry.');
     submitted = true;
+    $('background-warning').hidden = true;
     $('submit').textContent = 'Submitted';
     $('submit-status').textContent = 'Thank you for your help. You can close this tab now.';
   } catch (error) {
