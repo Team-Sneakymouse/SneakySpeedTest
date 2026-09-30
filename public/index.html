@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#181818">
   <meta name="description" content="Compare resourcepack download speeds and help diagnose slow downloads.">
   <title>SneakySpeedTest</title>
   <link rel="stylesheet" href="/style.css">
@@ -19,7 +20,7 @@
         </div>
         <div class="test-controls"><button id="start" class="button primary" disabled>Loading…</button><button id="cancel" class="button secondary" hidden>Stop</button></div>
       </div>
-      <div id="progress-area" class="progress-area" hidden><div class="progress-label"><span id="progress-label">Starting…</span><span id="progress-value">0 / 4 samples</span></div><progress id="progress" max="4" value="0"></progress><p id="live-speed" class="fine-print">Connecting…</p></div>
+      <div id="progress-area" class="progress-area" hidden><div class="progress-label"><span id="progress-label">Starting…</span><span id="progress-value">0 / 4 samples</span></div><progress id="progress" aria-label="Download progress" max="4" value="0"></progress><p id="live-speed" class="fine-print">Connecting…</p></div>
       <div class="route-grid">
         <article class="route"><p id="production-host" class="host">resourcepack.rawb.tv</p><div class="speed"><strong id="production-speed">—</strong><span>Mbps</span></div><div id="production-samples" class="sample-list"></div></article>
         <article class="route"><p id="comparison-host" class="host">r2.dev</p><div class="speed"><strong id="comparison-speed">—</strong><span>Mbps</span></div><div id="comparison-samples" class="sample-list"></div></article>
@@ -31,9 +32,9 @@
         <label class="username-label" for="username">Minecraft username <span>optional</span><input id="username" maxlength="64" autocomplete="off"></label>
         <div class="disclosure">
           <p>Submit sends download measurements, timestamps, test order, errors, response headers, browser/language, tab visibility, country/ASN, and optional username.</p>
-          <p>We don't store raw IPs, pack contents, cookies, browsing history, or account credentials. The operator plans to delete results in about two weeks.</p>
+          <p>We don't store raw IPs, pack contents, cookies, browsing history, or account credentials. Dani will delete results in about two weeks.</p>
         </div>
-        <details><summary>Report</summary><p class="fine-print">The server adds the submission time and country/ASN. Cloudflare and hosting infrastructure process your connection. No analytics or automatic expiry.</p><pre id="report-preview"></pre></details>
+        <details><summary>Report</summary><p class="fine-print">The server adds the submission time and country/ASN. Cloudflare and hosting infrastructure process your connection.</p><pre id="report-preview"></pre></details>
         <div class="submit-actions"><button id="submit" class="button primary">Submit</button><button id="download" class="button secondary">Save JSON</button><span id="submit-status" role="status" aria-live="polite"></span></div>
       </div>
     </section>

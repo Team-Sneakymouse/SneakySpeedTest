@@ -40,7 +40,7 @@ The command adds missing fields and a unique submission ID index, preserving exi
 
 Top-level fields are `submission_id`, `username`, `status`, `country`, `asn`, `production_mbps`, `comparison_mbps`, and `results`. The JSON field contains all individual samples, endpoint URLs, test order, configuration ID, browser information, background-tab flag, client timestamps, and server submission timestamp. Summary speeds use successful samples only. A zero summary field can mean no successful samples; the JSON summary distinguishes this with `null`. Partial speeds remain in the individual samples.
 
-Submit retries use the same UUID and the unique index, so a lost response does not create duplicates. A successful submission is immutable; run a new test for another report. No results or request IPs are written to local files or application logs. The operator will remove the deployment and its data after about two weeks; no cleanup job runs.
+Submit retries use the same UUID and the unique index, so a lost response does not create duplicates. A successful submission is immutable; run a new test for another report. No results or request IPs are written to local files or application logs. Dani will remove the deployment and delete its data after about two weeks; no cleanup job runs.
 
 ## Measurement
 
@@ -86,7 +86,7 @@ Adapt `docker-compose.example.yml` to your existing Traefik network, entrypoint,
 
 `.github/workflows/deploy.yml` follows OverlayV1: verify on Node 22, fetch `/Registry` credentials via Infisical OIDC, publish `$REGISTRY_HOST/sneakyspeedtest:latest`, then fetch `/Watchtower` and trigger Watchtower. Configure repository secrets `INFISICAL_IDENTITY_ID` and `INFISICAL_DOMAIN`, and authorize this repository in the Infisical OIDC identity. It uses project `lords-of-minecraft`, environment `prod`. No secret values were copied from OverlayV1.
 
-Production container creation, DNS/routing, and production environment variables are managed manually by the operator.
+Production container creation, DNS/routing, and production environment variables are managed manually by Dani.
 
 Until both Infisical repository secrets are set, pushes run the tests and skip image publishing and Watchtower with a notice.
 
