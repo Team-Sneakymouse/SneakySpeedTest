@@ -154,7 +154,7 @@ $('submit').addEventListener('click', async () => {
     if (!response.ok) throw new Error(body.error || 'Submission failed. Please retry.');
     submitted = true;
     $('submit').textContent = 'Submitted';
-    $('submit-status').textContent = 'Saved.';
+    $('submit-status').textContent = 'Thank you for your help. You can close this tab now.';
   } catch (error) {
     $('submit-status').textContent = error.name === 'TimeoutError' ? 'Submission timed out. Retry Submit; it will not create a duplicate.'
       : error instanceof TypeError ? 'Could not reach the server. Your results are still here; retry Submit.' : error.message;
