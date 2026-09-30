@@ -1,0 +1,26 @@
+services:
+  sneakyspeedtest:
+    # Use your registry image for production, or build locally.
+    image: ${REGISTRY_HOST:-localhost}/sneakyspeedtest:latest
+    build: .
+    restart: unless-stopped
+    environment:
+      PORT: 8080
+      POCKETBASE_HOST: ${POCKETBASE_HOST:?Set POCKETBASE_HOST}
+      POCKETBASE_USERNAME: ${POCKETBASE_USERNAME:?Set POCKETBASE_USERNAME}
+      POCKETBASE_PASSWORD: ${POCKETBASE_PASSWORD:?Set POCKETBASE_PASSWORD}
+      POCKETBASE_COLLECTION: sneakyspeedtest
+      TRUST_PROXY_HEADERS: "true"
+    networks:
+      - traefik
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.sneakyspeedtest.rule: Host(`speedtest.rawb.tv`)
+      traefik.http.routers.sneakyspeedtest.entrypoints: websecure
+      traefik.http.routers.sneakyspeedtest.tls: "true"
+      traefik.http.services.sneakyspeedtest.loadbalancer.server.port: "8080"
+    # Adjust network, entrypoint, and TLS resolver to your existing Traefik setup.
+    # No public container port: only Traefik should reach this service.
+networks:
+  traefik:
+    external: true

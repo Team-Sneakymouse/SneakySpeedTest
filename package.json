@@ -1,0 +1,13 @@
+{
+  "name": "sneaky-speed-test",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node --watch server.mjs",
+    "test": "node --test",
+    "setup:db": "node scripts/setup-db.mjs"
+  }
+}
