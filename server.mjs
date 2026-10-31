@@ -18,6 +18,7 @@ function reply(res, status, body) {
   res.end(JSON.stringify(body));
 }
 
+// Keep the 64 KiB body cap. Results and IPs are never logged; only fixed strings.
 async function readJson(req) {
   if (!req.headers['content-type']?.startsWith('application/json')) throw new Error('Expected JSON.');
   const chunks = [];
@@ -35,6 +36,7 @@ export function makeServer({ env = process.env, pb = new PocketBase(env) } = {})
   return createServer(async (req, res) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'no-referrer');
+    // Strict CSP: no inline scripts or styles.
     res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https:; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
     const path = new URL(req.url, 'http://localhost').pathname;
     if (req.method === 'GET' && path === '/healthz') return reply(res, 200, { status: 'ok' });
