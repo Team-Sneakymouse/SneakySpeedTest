@@ -34,7 +34,7 @@ jobs:
             echo "enabled=true" >> "$GITHUB_OUTPUT"
           else
             echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::Tests passed. Configure INFISICAL_IDENTITY_ID and INFISICAL_DOMAIN to enable image publishing and Watchtower."
+            echo "::notice::Tests passed. Configure INFISICAL_IDENTITY_ID and INFISICAL_DOMAIN to enable image publishing."
           fi
 
   build-and-deploy:
