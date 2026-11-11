@@ -84,11 +84,11 @@ docker build -t sneakyspeedtest:latest .
 
 Adapt `docker-compose.example.yml` to your existing Traefik network, entrypoint, TLS resolver, registry, and environment management. The service listens on port 8080 and needs no volume. The example exposes no host port. Container health checks `/healthz` for process liveness; it does not claim PocketBase is reachable.
 
-`.github/workflows/deploy.yml` follows OverlayV1: verify on Node 22, fetch `/Registry` credentials via Infisical OIDC, publish `$REGISTRY_HOST/sneakyspeedtest:latest`, then fetch `/Watchtower` and trigger Watchtower. Configure repository secrets `INFISICAL_IDENTITY_ID` and `INFISICAL_DOMAIN`, and authorize this repository in the Infisical OIDC identity. It uses project `lords-of-minecraft`, environment `prod`. No secret values were copied from OverlayV1.
+`.github/workflows/deploy.yml` follows OverlayV1: verify on Node 22, fetch `/Registry` credentials via Infisical OIDC, publish `$REGISTRY_HOST/sneakyspeedtest:latest`, and the registry's webhook then triggers Watchtower. Configure repository secrets `INFISICAL_IDENTITY_ID` and `INFISICAL_DOMAIN`, and authorize this repository in the Infisical OIDC identity. It uses project `lords-of-minecraft`, environment `prod`. No secret values were copied from OverlayV1.
 
 Production container creation, DNS/routing, and production environment variables are managed manually by Dani.
 
-Until both Infisical repository secrets are set, pushes run the tests and skip image publishing and Watchtower with a notice.
+Until both Infisical repository secrets are set, pushes run the tests and skip image publishing with a notice.
 
 ## Verify
 
